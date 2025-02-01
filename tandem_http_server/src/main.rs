@@ -4,10 +4,11 @@ use figment::{
     providers::{Env, Format, Json, Toml},
     Figment,
 };
+
 use serde::Deserialize;
 use tandem_garble_interop::{check_program, compile_program, serialize_input, Role};
 use tandem_http_server::{build, MpcRequest, MpcSession};
-
+use rocket::data::{ByteUnit, Limits};
 use std::{env, iter::zip};
 
 #[macro_use]
@@ -35,6 +36,16 @@ fn rocket() -> _ {
         .merge(Json::file("Tandem.json"))
         .merge(Toml::file("Tandem.toml"))
         .merge(Env::prefixed("TANDEM_"))
+        .merge(("limits", Limits::new().limit("json", ByteUnit::Megabyte(1000 * 1024 * 1024))
+                                      .limit("file", ByteUnit::Megabyte(1000 * 1024 * 1024))
+                                      .limit("msgpack", ByteUnit::Megabyte(1000 * 1024 * 1024))
+                                      .limit("data-form", ByteUnit::Megabyte(1000 * 1024 * 1024))
+                                      .limit("string", ByteUnit::Megabyte(1000 * 1024 * 1024))
+                                      .limit("bytes", ByteUnit::Megabyte(1000 * 1024 * 1024))
+                                      .limit("form", ByteUnit::Megabyte(1000 * 1024 * 1024))
+                                    
+                                    
+                                       ) )
         .extract()
         .unwrap();
 
