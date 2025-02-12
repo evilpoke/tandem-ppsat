@@ -83,6 +83,7 @@ fn rocket() -> _ {
         let mut handlers_with_circuit = HashMap::with_capacity(config.handlers.capacity());
         for (fn_name, handlers) in config.handlers {
             let circuit = compile_program(&program, &fn_name)
+            //let circuit = compile_with_constants(&program, &fn_name)
                 .unwrap_or_else(|e| panic!("{fn_name} in {path:?} cannot be compiled:\n{e}"));
             let mut inputs = HashMap::with_capacity(handlers.len());
             for (metadata, input) in handlers {
@@ -90,7 +91,7 @@ fn rocket() -> _ {
                     .unwrap_or_else(|e| panic!("Could not parse literal of handler {path:?}, {fn_name}, \"{metadata}\":\n{e}"));
                 inputs.insert(metadata, input);
             }
-            handlers_with_circuit.insert(fn_name, (circuit.gates, inputs));
+            handlers_with_circuit.insert(fn_name, (circuit.gates, inputs)); 
         }
         let handler = move |r: MpcRequest| -> Result<MpcSession, String> {
             let hash_of_source_code = blake3::hash(r.program.trim().as_bytes());

@@ -15,7 +15,7 @@ impl MsgQueue {
             msg_counter: 0,
         }
     }
-
+    
     // flushes the queue until excluding {last_durably_received_offset}.
     //
     // after this operation, the logical message id of each queued message will be **strictly bigger than** the given offset

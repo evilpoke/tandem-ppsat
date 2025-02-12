@@ -96,7 +96,7 @@ pub(crate) async fn dialog<'a>(
     messages: Data<'_>,
     registry: &State<EngineRegistry>,
 ) -> Result<ByteStream![Vec<u8>], Error> {
-    let stream = messages.open(20.mebibytes());
+    let stream = messages.open(2000.mebibytes());
     let (last_durably_received_offset, messages): (Option<u32>, Vec<(Vec<u8>, MessageId)>) =
         bincode::deserialize(&stream.into_bytes().await.unwrap())?;
 

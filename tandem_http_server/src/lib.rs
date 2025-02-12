@@ -41,6 +41,7 @@
 
 use engine::{stage, Cors};
 use rocket::{Build, Rocket};
+use rocket::shield::Shield;
 pub use types::{HandleMpcRequestFn, MpcRequest, MpcSession};
 
 #[macro_use]
@@ -58,5 +59,5 @@ mod tests;
 
 /// Starts a Tandem server, responding to requests using the specified custom handler logic.
 pub fn build(handler: HandleMpcRequestFn) -> Rocket<Build> {
-    rocket::build().attach(stage(handler)).attach(Cors)
+    rocket::build().attach(stage(handler)).attach(Cors).attach(Shield::new())
 }
