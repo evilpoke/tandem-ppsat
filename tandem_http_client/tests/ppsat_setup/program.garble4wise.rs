@@ -2,6 +2,22 @@
 
   //////////////////////////// Stack structures
 
+  // substitute with 0-based size value
+
+  // 4: 4               ->  4
+  // variablesnumberusize: 4usize     ->  4usize
+
+  // clausesofpartyA: 6                ->  6
+  // clausesofpartyA: 6usize           ->  6usize
+
+  // clausesofpartyB: 6                ->  6
+  // clausesofpartyB: 6usize           ->  6usize
+
+  // totalclauses:    12                    ->  12
+  // totalclausesu:    12usize              ->  12usize
+ 
+  // stacksize:       255            -> 255
+  
   
   enum IsDummyStorage { 
     RealValue,
@@ -111,8 +127,8 @@
   
   
   struct Formula {
-  clauses: [Clause; 8],
-  alive: [bool; 8],
+  clauses: [Clause; 12],
+  alive: [bool; 12],
   }
   
   ///////////////////////////////// SAT Operations
@@ -124,12 +140,12 @@
   }
   pub fn generateFormula(
       a: (
-        [ ([bool; 4],[bool; 4])  ;4  ]  ,  
-        [usize; 4]
+        [ ([bool; 4],[bool; 4])  ;6  ]  ,  
+        [usize; 6]
     ) ,
       b: (
-        [ ([bool; 4],[bool; 4])  ;4  ]  ,  
-        [usize; 4]
+        [ ([bool; 4],[bool; 4])  ;6  ]  ,  
+        [usize; 6]
       )
   ) -> Formula {
   
@@ -138,11 +154,10 @@
   let mut Nl = 0usize;
   let mut newclause = generateEmptyClause();
   
-  let mut allclauses = [newclause; 8];
+  let mut allclauses = [newclause; 12];
   
   // first
-  let ii = [0usize,1usize,2usize,3usize]; //0..3;
-  for i in ii {
+  for i in 0usize..6usize {
     
     matP = ((a.0)[i]).0;
     matN = ((a.0)[i]).1;
@@ -154,15 +169,14 @@
   
   }
   // second
-  let ii = [0usize,1usize,2usize,3usize]; //0usize..3usize;
-  for i in ii {
+  for i in 0usize..6usize {
     matP = ((b.0)[i]).0;
     matN = ((b.0)[i]).1;
     Nl = (b.1)[i];
   
     newclause = Clause {matP: matP, matN: matN, Nl: Nl};
   
-    allclauses[4usize + i] = newclause;
+    allclauses[6usize + i] = newclause;
   
   }
   
@@ -177,9 +191,9 @@
   
   }
   
-  fn giveAllTrueClauses() -> [bool; 8] {
+  fn giveAllTrueClauses() -> [bool; 12] {
   
-  let mut array = [true; 8];
+  let mut array = [true; 12];
   
   
   array
@@ -214,8 +228,7 @@
   
   let indplus = (l.0);
   let indmius = (l.1); 
-  let ii = [0usize, 1usize, 2usize, 3usize];  //0..3;
-  for i in ii {
+  for i in 0usize..4usize {
     b = b | (Pj[i] & indplus[i]) | (Nj[i] & indmius[i]);
   }
   
@@ -232,11 +245,10 @@
   
   let mut Nl = c.Nl;
   
-  if clausecontainsl(l,c) {
+  if clausecontainsl(l,c) == true {
     Nl = Nl - 1usize;
   }
-  let ii = [0usize, 1usize, 2usize, 3usize];  // 0..3;
-  for i in ii {
+  for i in 0usize..4usize {
       
     Pj[i] = Pj[i] & (Pj[i] ^ indplus[i]);
     Nj[i] = Nj[i] & (Nj[i] ^ indmius[i]);
@@ -252,8 +264,7 @@
   
   let alivearray = f.alive;
   let mut somewherefilled = false;
-  let ii = [0usize, 1usize, 2usize, 3usize, 4usize, 5usize, 6usize, 7usize];  
-  for i in ii {
+  for i in 0usize..12usize {
     
     somewherefilled = somewherefilled | alivearray[i];
   
@@ -285,10 +296,9 @@
   let mut Cj = generateEmptyClause();
   
   let invertetl = invertliteral(l);
-  let jj = [0usize, 1usize, 2usize, 3usize, 4usize, 5usize, 6usize, 7usize]; //0..7;
-  for j in jj {
+  for j in 0usize..12usize {
     Cj = f.clauses[j];
-    if isaunitclause(Cj) & clausecontainsl(invertetl, Cj) & f.alive[j] {
+    if (isaunitclause(Cj) == true) & (clausecontainsl(invertetl, Cj)==true) & (f.alive[j]==true) {
       b1 = true;
     }
   }
@@ -323,10 +333,9 @@
   let mut b1 = false;
   let inverteta = invertliteral(a);
   let mut Cj = generateEmptyClause();
-  let mut allclauses = [Cj; 8];
+  let mut allclauses = [Cj; 12];
   let mut ff = f;
-  let jj =  [0usize, 1usize, 2usize, 3usize, 4usize, 5usize, 6usize, 7usize];  //0..7;
-  for j in jj {
+  for j in 0usize..12usize {
     Cj = ff.clauses[j];
     b0 = clausecontainsl(a, Cj);
     b1 = clausecontainsl(inverteta, Cj);
@@ -363,10 +372,9 @@
   let mut a =  ( [false; 4] , [false; 4] ) ;
   let mut b = false;
   let mut Cj = generateEmptyClause();
-  let jj = [0usize,1usize,2usize,3usize,4usize,5usize,6usize,7usize]; //0..7;
-  for j in jj {
+  for j in 0usize..12usize {
     Cj = f.clauses[j];
-    if isaunitclause(Cj) & f.alive[j] {
+    if (isaunitclause(Cj)==true) & (f.alive[j]==true) {
       a = (Cj.matP, Cj.matN);  // because Cj is a single clause, its format (without the Nl number) is equal to that of a clause
       b = true;
     }
@@ -392,35 +400,32 @@
   // very naive decider
   // output: an assignment 
   
-  let jj = [0usize, 1usize, 2usize, 3usize, 4usize, 5usize, 6usize, 7usize]; // 0..7;
   
   let mut oredclause = generateEmptyClause();
   let mut ordermatP = oredclause.matP;
   let mut ordermatN = oredclause.matN;
   
-  for j in jj {
+  for j in 0usize..12usize {
     let Cj = f.clauses[j];
     let Cjisalive = f.alive[j];
 
-    let iterd = [0usize, 1usize, 2usize, 3usize];
   
     let matP = Cj.matP;
     let matN = Cj.matN;
   
-    for d in iterd {
+    for d in 0usize..4usize {
       ordermatP[d] = (matP[d] & Cjisalive) | ordermatP[d];
     }
   
-    for d in iterd {
+    for d in 0usize..4usize {
       ordermatN[d] = (matN[d] & Cjisalive) | ordermatN[d];
     }
   
   }
   
-  let iterd = [0usize, 1usize, 2usize, 3usize];
   let mut pselect = 0usize;
   let mut allmatPacc = false;
-  for d in iterd {
+  for d in 0usize..4usize {
   
     if ordermatP[d] == true {
       pselect = d;    
@@ -429,7 +434,7 @@
   }
   
   let mut nselect = 0usize;
-  for d in iterd {
+  for d in 0usize..4usize {
   
     if ordermatN[d] == true {
       nselect = d;
@@ -486,7 +491,7 @@
   os_o = condpush( !b_unit & !b_conflict , valuetopush, os_o );
   
   
-  if b_unit {
+  if b_unit == true {
     a = a_unit;
   } else {
     a = a_dec;
@@ -534,7 +539,7 @@
   os_o = res1.1;
   let outvar = res1.0;
   let returntype = outvar.specialflag;
-  if returntype == IsDummyStorage::Dummy {  // testing if dummyvariableemptystack
+  if (returntype == IsDummyStorage::Dummy) == true {  // testing if dummyvariableemptystack
     satresult = Sol::Unsat; 
   }
   let e = outvar.f; // actually extracting the formula
@@ -561,10 +566,10 @@
   os_o = condpush( (!b_unit) & (!b_conflict) , valuetopush , os_o);
   
   
-  if b_unit == false {
-    newa = a_dec;
-  } else {
+  if b_unit == true {
     newa = a_unit;
+  } else {
+    newa = a_dec;
   }
   
   let mut newf = phi_prop;
@@ -581,14 +586,14 @@
   
   
   pub fn main(a: (
-                  [ ([bool; 4],[bool; 4])  ;  4  ]  ,  
-                  [usize; 4]
+                  [ ([bool; 4],[bool; 4])  ;  6  ]  ,  
+                  [usize; 6]
               ) ,
             b: (
-              [ ([bool; 4],[bool; 4])  ;  4  ]  ,  
-                  [usize; 4]
+              [ ([bool; 4],[bool; 4])  ;  6  ]  ,  
+                  [usize; 6]
               )
-        ) ->  (u8, ([bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4]), [bool; 8], (usize, usize, usize, usize, usize, usize, usize, usize) , ([bool;4],[bool;4]) ) {
+        ) -> u8 { //(u8, ([bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4], [bool; 4]), [bool; 12], (usize, usize, usize, usize, usize, usize, usize, usize, usize, usize, usize, usize) , ([bool;4],[bool;4]) ) {
           
     // u8 solving id, currently steppedformula
         
@@ -598,7 +603,7 @@
     
     let dummystorage = StorageType {
         f: ( nonsenseassignment , f ),
-        specialflag: IsDummyStorage::Dummy
+        specialflag: IsDummyStorage::RealValue
     };
     
   
@@ -645,7 +650,7 @@
     let mut result = 0u8;
     let mut satresult = Sol::Unknown;
     
-    for i in [0usize,0usize,0usize,0usize,0usize,0usize] {
+    for i in [0usize,0usize,0usize,0usize,0usize,0usize,0usize,0usize,0usize,0usize] {
       
       if satresult == Sol::Unknown {
         let v = next_giant_step(f, os_o, a);   // -> (Sol, assignment, StackState, Formula)
@@ -672,14 +677,85 @@
     //let b_unit = v.bvalue;
     //let a_unit = v.avalue;
   
-    let returneddebug = (result ,  (f.clauses[0].matP, f.clauses[0].matN, f.clauses[1].matP, f.clauses[1].matN, f.clauses[2].matP, f.clauses[2].matN, f.clauses[3].matP, f.clauses[3].matN, 
-                              f.clauses[4].matP, f.clauses[4].matN, f.clauses[5].matP, f.clauses[5].matN, f.clauses[6].matP, f.clauses[6].matN, f.clauses[7].matP, f.clauses[7].matN) , 
-                              f.alive,
-                              (f.clauses[0].Nl, f.clauses[1].Nl, f.clauses[2].Nl, f.clauses[3].Nl, f.clauses[4].Nl, f.clauses[5].Nl, f.clauses[6].Nl, f.clauses[7].Nl ),
-                              a
-                                );
+    let returneddebug = (result ,  (f.clauses[0].matP, f.clauses[0].matN, 
+                                    f.clauses[1].matP, f.clauses[1].matN, 
+                                    f.clauses[2].matP, f.clauses[2].matN, 
+                                    f.clauses[3].matP, f.clauses[3].matN, 
+                                    f.clauses[4].matP, f.clauses[4].matN, 
+                                    f.clauses[5].matP, f.clauses[5].matN, 
+                                    f.clauses[6].matP, f.clauses[6].matN, 
+                                    f.clauses[7].matP, f.clauses[7].matN,
+                                    f.clauses[8].matP, f.clauses[8].matN,
+                                    f.clauses[9].matP, f.clauses[9].matN,
+                                    f.clauses[10].matP, f.clauses[10].matN,
+                                    f.clauses[11].matP, f.clauses[11].matN,
+                                  ) , 
+                                    f.alive,
+                                   (f.clauses[0].Nl, f.clauses[1].Nl, 
+                                    f.clauses[2].Nl, f.clauses[3].Nl, 
+                                    f.clauses[4].Nl, f.clauses[5].Nl, 
+                                    f.clauses[6].Nl, f.clauses[7].Nl,
+                                    f.clauses[8].Nl, f.clauses[9].Nl,
+                                    f.clauses[10].Nl, f.clauses[11].Nl ),
+      a
+        );
+
+        result
     
-    returneddebug
+    /*
+    let sigma = check(a, f);
+    let mut satresult =  Sol::Unknown;
+    
+    if sigma == CheckCode::Zero {
+      satresult = Sol::Sat;
+    }
+    
+    let b_conflict = sigma == CheckCode::One;
+    
+    //returneddebug
+
+    //b_conflict
+
+
+    let nonsenseassignment = ([true;4], [true;4]);
+    let dummyvariableemptystack = StorageType {
+      f: (nonsenseassignment, f),
+      specialflag: IsDummyStorage::Dummy
+    };
+    
+    let dummyvariablecondfalse = StorageType {
+      f: (nonsenseassignment, f),
+      specialflag: IsDummyStorage::DummyPrime
+    };
+    
+    //condpop( cond: bool, stackstate: StackState, dummyvariableemptystack: StorageType, dummyvariablecondfalse: StorageType) -> (StorageType,StackState) {
+    
+    let res1 = condpop(b_conflict, os_o, dummyvariableemptystack, dummyvariablecondfalse); 
+    //os_o = res1.1;
+    let outvar = res1.0;
+    let returntype = outvar.specialflag;
+    if (returntype == IsDummyStorage::Dummy) == true {  // testing if dummyvariableemptystack
+      satresult = Sol::Unsat; 
+    }
+    let arrayacc = os_o.arrayacc;
+    let v = arrayacc[1usize].f;
+    let p = v.0;
+    returntype
+
+     */
+
+    
+  //enum IsDummyStorage { 
+  //  RealValue,
+  //  Dummy,
+  //  DummyPrime
+  //}
+
+  //struct StorageType {
+  //  f: ( ([bool;4],[bool;4]) , Formula ),
+  //  specialflag: IsDummyStorage
+  
+    
 
     /* 
     let allassignments = generateEmptyClause();
@@ -806,5 +882,44 @@
   
   [ ([bool;4],[bool;4]),([bool;4],[bool;4]),([bool;4],[bool;4]),([bool;4],[bool;4])    , ([bool;4],[bool;4]),([bool;4],[bool;4]),([bool;4],[bool;4]),([bool;4],[bool;4])] , [usize; 8]
   
+
+
+
+
+    (1 , 2)  ,  (-1, -3)  , (-2,  -4) , (-3, -4),    (-1 -2 3 -4)  (-2 -3 4) (2,  3)  ,  (2,   4)  , (2 ,   -4), (-1 -2 -3),  (-2 3 -4)     (-1 2 3 4)
+    4:true
+    (1 , 2)  ,  (-1, -3)  , (-2) , (-3),    (-1 -2 3)  (2,  3)  ,   , (2 ), (-1 -2 -3),  (-2 3) 
+    2:true
+     ,  (-1, -3)  , () , (-3),    (-1 3)    ,   , , (-1 -3),  ( 3) 
+
+
+
+    1:true  2:true  3:false   4:false
+    
+    
+    A: (1 , 2)  ,  (-1, -3)  , (-2,  -4) , (-3, -4),    (-1 -2 3 -4)  (-2 -3 4)      #6
+
+    
+    A: ( [ ([true,true,false,false],[false,false,false,false]) ,
+           ([false,false,false,false],[true,false,true,false]) , 
+           ([false,false,false,false],[false,true,false,true]) ,
+           ([false,false,false,false],[false,false,true,true]) ,
+           ([false,false,true,false] ,[true,true,false,true])  ,
+           ([false,false,false,true],[false,true,true,false])  ]     , [2usize,2usize,2usize,2usize,4usize,3usize])
+
+
+    B: (2,  3)  ,  (2,   4)  , (2 ,   -4), (-1 -2 -3),  (-2 3 -4)     (-1 2 3 4)      #6
+    B  ( [ ([false,true,true,false], [false,false,false,false]), 
+           ([false,true,false,true],[false,false,false,false]), 
+           ([false,true,false,false],[false,false,false,true]), 
+           ([false,false,false,false], [true,true,true,false]), 
+           ([false,false,true,false],[false,true,false,true]), 
+           ([false,true,true,true],  [true,false,false,false])  ]     , [2usize,2usize,2usize,3usize,3usize,4usize])
+
+
+
+
+
+
   */  
   
