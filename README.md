@@ -21,9 +21,15 @@ For 4wise clauses
 
 For 6wise clauses:
 
+v2202502255084314622.quicksrv.de
 
 
     tandem_http_client tests/ppsat_setup/program.garble6wise.rs --function main --url http://localhost:8000/ --input "( [ ([false,true,true,false], [false,false,false,false]), ([false,true,false,true],[false,false,false,false]),  ([false,true,false,false],[false,false,false,true]),  ([false,false,false,false], [true,true,true,false]),   ([false,false,true,false],[false,true,false,true]),   ([false,true,true,true],  [true,false,false,false])  ]     , [2usize,2usize,2usize,3usize,3usize,4usize])" --metadata _
+
+
+To speak to the server:
+
+    tandem_http_client tests/ppsat_setup/program.garble6wise.rs --function main --url http://v2202502255084314622.quicksrv.de:8500/ --input "( [ ([false,true,true,false], [false,false,false,false]), ([false,true,false,true],[false,false,false,false]),  ([false,true,false,false],[false,false,false,true]),  ([false,false,false,false], [true,true,true,false]),   ([false,false,true,false],[false,true,false,true]),   ([false,true,true,true],  [true,false,false,false])  ]     , [2usize,2usize,2usize,3usize,3usize,4usize])" --metadata _
 
 
 ---
